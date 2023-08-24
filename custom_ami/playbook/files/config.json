@@ -1,0 +1,86 @@
+{
+    "agent": {
+            "metrics_collection_interval": 30,
+            "run_as_user": "root"
+            
+    },
+    "logs": {
+            "logs_collected": {
+                    "files": {
+                            "collect_list": [
+                                    {
+                                            "file_path": "var/log/httpd/access_log",
+                                            "log_group_name": "httpd_access_logs",
+                                            "log_stream_name": "{instance_id}",
+                                            "retention_in_days": 7, 
+                                            "timezone": "Local"
+                                    },
+                                    {
+                                            "file_path": "/var/log/httpd/error_log",
+                                            "log_group_name": "httpd_error_logs",
+                                            "log_stream_name": "{instance_id}",
+                                            "retention_in_days": 7
+                                    }
+                            ]
+                    }
+            }
+    },
+    "metrics": {
+            "namespace": "CloudPrime/Prod",
+
+            "aggregation_dimensions": [
+                    [
+                            "InstanceType"
+                    ]
+            ],
+
+            "append_dimensions": {
+                    "ImageId": "${aws:ImageId}",
+                    "InstanceId": "${aws:InstanceId}",
+                    "InstanceType": "${aws:InstanceType}"
+            },
+
+            "metrics_collected": {
+                    "disk": {
+                            "measurement": [
+                                {"name": "used_percent", "rename": "DISK_USED_PERCENT", "unit": "Percent"}, 
+                                {"name": "free", "rename": "DISK_FREE", "unit": "Megabytes"}
+                            ],
+                            "metrics_collection_interval": 30,
+                            "resources": [
+                                    "*"
+                            ],
+                            "append_dimensions": {  
+                                "env":"PROD"
+                              }
+                    },
+
+                    "mem": { 
+                            "measurement": [
+                                {"name": "used_percent", "rename": "MEM_USED_PERCENT", "unit": "Percent"}, 
+                                {"name": "free", "rename": "MEM_FREE", "unit": "Megabytes"}
+                            ],
+                            "metrics_collection_interval": 30 ,
+                            "append_dimensions": {  
+                                "env":"PROD"
+                              }          
+                    },
+
+
+                    "processes": {
+                        "measurement": [
+                          "running",
+                          "sleeping",
+                          "dead"
+                        ]
+                   }, 
+
+
+                    "statsd": {
+                            "metrics_aggregation_interval": 30,
+                            "metrics_collection_interval": 60,
+                            "service_address": ":8125"
+                    }
+            }
+    }
+}

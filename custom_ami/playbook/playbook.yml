@@ -1,0 +1,43 @@
+- name: Configure webserver with nginx
+  hosts: default
+  become: True 
+  tasks:
+
+    - name: Update cache 
+      yum:
+       update_cache: yes
+      
+    - name: install httpd
+      yum: 
+        name: httpd 
+        state: present
+
+    - name: copy website content
+      copy: 
+        src: index.html
+        dest: /var/www/html
+
+
+    - name: "start apache"
+      service: 
+        name: httpd
+        state: started
+        enabled: yes
+
+
+    - name: Install CW Agent
+      shell: |
+        sudo yum install amazon-cloudwatch-agent -y
+    
+    - name: copy CW config file
+      copy: 
+        src: ./files/config.json
+        dest: /opt/aws/amazon-cloudwatch-agent/bin/config.json
+
+
+    - name: Start CW Agent
+      shell: |
+         sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+     
+
+    
