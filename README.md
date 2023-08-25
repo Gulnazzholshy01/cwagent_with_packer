@@ -1,2 +1,7 @@
 # cwagent_with_packer
-CW Agent in Custom AMI
+
+How to create AMAZON Custom AMI with Packer ?
+
+How to configure CW Agent within AMI?
+
+This example shows everything!
